@@ -15,7 +15,6 @@ navigator.getUserMedia(
 	function(error) { return; }
 );
 
-
 // Scene
 let scene = new THREE.Scene();
 
@@ -198,6 +197,17 @@ var updateText = function(txtCanvasCtx, txtOld, txtNew) {
     );
     txtTexture.needsUpdate = true;  // テクスチャを更新     
 };
+
+
+var Controller = function() {
+    this.speed = 0.1;
+}
+var controller = new Controller();
+
+var gui = new dat.GUI({
+    height : 5 * 32 - 1
+});
+gui.add(controller, 'speed', -5, 5);
 
 // Update
 function render() {
