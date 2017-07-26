@@ -68,12 +68,16 @@ var text = new window.Text(scene);
 var Controller = function() {
     this.speed = 0.1;
 }
-var controller = new Controller();
 
+var controller = new Controller();
 var gui = new dat.GUI({
-    height : 5 * 32 - 1
 });
-gui.add(controller, 'speed', -5, 5);
+
+var sound_limit = 200;
+var speed_gui = gui.add(controller, 'speed', 0, 255);
+speed_gui.onFinishChange(function(value){
+    sound_limit = value;
+});
 
 // Update
 function render() {
@@ -83,6 +87,13 @@ function render() {
 	analyser.getByteFrequencyData(waveData);
     cube.updateRotation(waveData);
     updateColor(waveData);
+
+    if (waveData[0] > sound_limit) {
+        let ind = Math.round(Math.random()*4-0.5);
+        text.updateText(text.words[ind]);
+        console.log(sound_limit);        
+    }
+
 
     renderer.render(scene, camera);
 }

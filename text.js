@@ -2,7 +2,9 @@
     window.Text = function(scene){
         // canvas要素
         this.txt = '大丈夫';
+        this.words = ['大丈夫', '納豆', '夏', 'うなぎ', 'です', '愛'];
         this.n_char = this.txt.length;
+        this.color = '#ffffff';
         this.char_size = 512;
         this.ratio = 1.1;
         this.canvasHeight = this.char_size * this.ratio;
@@ -72,7 +74,7 @@
         // txtCanvasCtx.rect(0,0, txtCanvas.width, txtCanvas.height);
         // txtCanvasCtx.fill();
 
-        this.txtCanvasCtx.fillStyle = '#ffffff';
+        this.txtCanvasCtx.fillStyle = this.color;
         this.txtCanvasCtx.fillText(
             this.txt, (this.canvasWidth)/2, this.char_size
         );
@@ -91,7 +93,7 @@
 
     window.Text.prototype.updateText = function(txtNew) {
         this.txtCanvasCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-        this.txtCanvasCtx.fillStyle = '#000000';
+        this.txtCanvasCtx.fillStyle = this.color;
         this.txtCanvasCtx.fillText(
             txtNew, (this.canvasWidth)/2, this.char_size
         );
