@@ -88,12 +88,14 @@ function render() {
     cube.updateRotation(waveData);
     updateColor(waveData);
 
-    if (waveData[0] > sound_limit) {
-        let ind = Math.round(Math.random()*4-0.5);
-        text.updateText(text.words[ind]);
-        console.log(sound_limit);        
+    if (waveData[0] > sound_limit && (new Date().getTime() / 1000) - text.last_changed> 0.1) {
+        if (text.is_on) {
+            text.clearText();
+        } else {
+            let ind = Math.round(Math.random()*4-0.5);
+            text.updateText(text.words[ind], waveData[0] / 80);
+        }  
     }
-
 
     renderer.render(scene, camera);
 }

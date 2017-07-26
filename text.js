@@ -7,6 +7,8 @@
         this.color = '#ffffff';
         this.char_size = 512;
         this.ratio = 1.1;
+        this.is_on = true;
+        this.last_changed = 0;
         this.canvasHeight = this.char_size * this.ratio;
         this.canvasWidth = this.char_size * this.n_char * this.ratio;
 
@@ -91,12 +93,23 @@
         scene.add(this.mesh);
     };
 
-    window.Text.prototype.updateText = function(txtNew) {
+    window.Text.prototype.updateText = function(txtNew, size) {
         this.txtCanvasCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         this.txtCanvasCtx.fillStyle = this.color;
         this.txtCanvasCtx.fillText(
             txtNew, (this.canvasWidth)/2, this.char_size
         );
         this.txtTexture.needsUpdate = true;  // テクスチャを更新
+        this.last_changed = new Date().getTime() / 1000;
+        this.is_on = true; 
+        this.geometry.attributes.position.array = this.vertices.map(function(x) {return x * size;});
+        this.geometry.attributes.position.needsUpdate = true;
+    };
+
+    window.Text.prototype.clearText = function() {
+        this.txtCanvasCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+        this.txtTexture.needsUpdate = true;  // テクスチャを更新        
+        this.last_changed = new Date().getTime() / 1000;        
+        this.is_on = false;
     };
 })();
