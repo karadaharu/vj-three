@@ -44,35 +44,7 @@ let light = new THREE.AmbientLight(0xff0000,0.5);
 lights.push(light);
 scene.add( light );
 
-// Cubes
-let cubes = [];
-let n_cubes = 4;
-let x_interval = 30;
-let size = 12;
-for (i = 0; i < n_cubes; i++) {
-    let geometry = new THREE.BoxGeometry(size,size,size);
-    let material = new THREE.MeshPhongMaterial( { color: '#ffffff' } );
-    let cube = new THREE.Mesh( geometry, material );
-    cube.position.set(i*x_interval-(n_cubes/2)*x_interval+size, 0, 0);
-    cubes.push(cube);
-    scene.add( cube );
-}
-
-let rotations = [];
-for (i = 0; i < n_cubes; i++) {
-    rotations.push(new THREE.Vector3(1,0,0));
-}
-
-function updateRotation(waveData) {
-    for (i = 0; i < n_cubes; i++) {
-        rotations[i].add(new THREE.Vector3(waveData[0+i],waveData[4+i],waveData[8+i])).normalize();
-        if (!isNaN(rotations[i].x)) {      
-            cubes[i].rotateOnAxis(rotations[i],waveData[12+i]/1000);
-        }
-    } 
-};
-
-function updateColor(waveData){
+function updateColor(waveData) {
     let scale = 30000;
     for (let i = 0; i < n_light; i++) {
         let col = lights[i].color.getHSL();
@@ -88,6 +60,8 @@ function updateColor(waveData){
         }
     }
 }
+
+var cube = new window.Cube(scene);
 
 // canvas要素
 var txt = '落ち着け';
@@ -157,10 +131,6 @@ var material_shader = new THREE.RawShaderMaterial({
 });
 
 // テクスチャを読み込む
-// 画像
-var texture = new THREE.TextureLoader().load('../img/mona-lisa.jpg');
-
-
 var txtCanvas = document.createElement('canvas');
 txtCanvas.width = canvasWidth;
 txtCanvas.height = canvasHeight;
@@ -215,7 +185,7 @@ function render() {
 
 	let waveData = new Uint8Array(analyser.frequencyBinCount);
 	analyser.getByteFrequencyData(waveData);
-    updateRotation(waveData);
+    cube.updateRotation(waveData);
     updateColor(waveData);
 
     renderer.render(scene, camera);
