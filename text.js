@@ -1,0 +1,100 @@
+(function(){
+    window.Text = function(scene){
+        // canvas要素
+        this.txt = '大丈夫';
+        this.n_char = this.txt.length;
+        this.char_size = 512;
+        this.ratio = 1.1;
+        this.canvasHeight = this.char_size * this.ratio;
+        this.canvasWidth = this.char_size * this.n_char * this.ratio;
+
+        // BufferGeometryを生成
+        this.geometry = new THREE.BufferGeometry();
+        // 平面用の頂点を定義
+        // d - c
+        // |   |
+        // a - b
+        this.l = 10.0;
+        this.l_w = this.l*this.n_char;
+        this.l_h = this.l;
+        this.l_z = 20.0;
+        this.vertexPositions = [
+            [-this.l_w, -this.l_h, this.l_z], // a
+            [ this.l_w, -this.l_h, this.l_z], // b
+            [ this.l_w,  this.l_h, this.l_z], // c
+            [-this.l_w,  this.l_h, this.l_z]  // d
+        ];
+
+        // Typed Arrayで頂点データを保持
+        this.vertices = new Float32Array(this.vertexPositions.length * 3);
+        for (var i = 0; i < this.vertexPositions.length; i++) {
+            this.vertices[i * 3 + 0] = this.vertexPositions[i][0];
+            this.vertices[i * 3 + 1] = this.vertexPositions[i][1];
+            this.vertices[i * 3 + 2] = this.vertexPositions[i][2];
+        }
+
+        // 頂点インデックスを生成
+        this.indices = new Uint16Array([
+            0, 1, 2,
+            2, 3, 0
+        ]);
+
+        this.uv = new Float32Array([
+            0.0, 1.0,
+            1.0, 1.0,
+            1.0, 0.0,
+            0.0, 0.0 
+        ]);
+
+        // attributesを追加
+        this.geometry.addAttribute('position', new THREE.BufferAttribute(this.vertices, 3));
+        this.geometry.setIndex(new THREE.BufferAttribute(this.indices,  1));
+        this.geometry.addAttribute('uv', new THREE.BufferAttribute(this.uv,2));
+
+        // シェーダー
+        this.material_shader = new THREE.RawShaderMaterial({
+            uniforms: {
+                txtTexture : {type : 't'}
+            },    
+            vertexShader: document.getElementById('vertexShader').textContent,
+            fragmentShader: document.getElementById('fragmentShader').textContent,
+            transparent: true
+        });
+
+        // テクスチャを読み込む
+        this.txtCanvas = document.createElement('canvas');
+        this.txtCanvas.width = this.canvasWidth;
+        this.txtCanvas.height = this.canvasHeight;
+        this.txtCanvasCtx = this.txtCanvas.getContext('2d');
+        this.txtCanvasCtx.font = 'normal '+ this.char_size.toString()  +'px' + ' ' + 'Hiragino Mincho ProN';
+        // txtCanvasCtx.fillStyle = '#ff00ff';
+        this.txtCanvasCtx.textAlign = 'center';
+        // txtCanvasCtx.rect(0,0, txtCanvas.width, txtCanvas.height);
+        // txtCanvasCtx.fill();
+
+        this.txtCanvasCtx.fillStyle = '#ffffff';
+        this.txtCanvasCtx.fillText(
+            this.txt, (this.canvasWidth)/2, this.char_size
+        );
+        this.txtTexture = new THREE.Texture(this.txtCanvas);
+
+        // txtTexture.minFilter = THREE.LinearFilter;
+        this.txtTexture.flipY = false;  // UVを反転しない (WebGLのデフォルトにする)
+        this.txtTexture.needsUpdate = true;  // テクスチャを更新
+
+        this.material_shader.uniforms.txtTexture.value = this.txtTexture;
+
+        this.mesh = new THREE.Mesh(this.geometry, this.material_shader);
+
+        scene.add(this.mesh);
+    };
+
+    window.Text.prototype.updateText = function(txtNew) {
+        this.txtCanvasCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+        this.txtCanvasCtx.fillStyle = '#000000';
+        this.txtCanvasCtx.fillText(
+            txtNew, (this.canvasWidth)/2, this.char_size
+        );
+        this.txtTexture.needsUpdate = true;  // テクスチャを更新
+    };
+})();
