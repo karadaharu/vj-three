@@ -11,6 +11,10 @@
         this.last_changed = 0;
         this.canvasHeight = this.char_size * this.ratio;
         this.canvasWidth = this.char_size * this.n_char * this.ratio;
+        this.is_expand = false;
+        this.start_time = 0;
+        this.target_size = 1.0;
+        this.orig_size = 1.0;
 
         // BufferGeometryを生成
         this.geometry = new THREE.BufferGeometry();
@@ -93,7 +97,7 @@
         scene.add(this.mesh);
     };
 
-    window.Text.prototype.updateText = function(txtNew, size) {
+    window.Text.prototype.updateText = function(txtNew, size, cur_time, is_expand) {
         this.txtCanvasCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         this.txtCanvasCtx.fillStyle = this.color;
         this.txtCanvasCtx.fillText(
@@ -104,6 +108,10 @@
         this.is_on = true; 
         this.geometry.attributes.position.array = this.vertices.map(function(x) {return x * size;});
         this.geometry.attributes.position.needsUpdate = true;
+        this.start_time = cur_time;
+        this.is_expand = is_expand;
+        this.target_size = size * 1.5 * Math.log(size+1);
+        this.orig_size = size;
     };
 
     window.Text.prototype.clearText = function() {
@@ -112,4 +120,12 @@
         this.last_changed = new Date().getTime() / 1000;        
         this.is_on = false;
     };
+
+    window.Text.prototype.updateSize = function(cur_time) {
+        if (!this.is_expand) {return;}
+        let ellapsed_time = cur_time - this.start_time;
+        let cur_size = (this.target_size - this.orig_size) * Math.min(1.0, ellapsed_time)  + this.orig_size;
+        this.geometry.attributes.position.array = this.vertices.map(function(x) {return x * cur_size;});
+        this.geometry.attributes.position.needsUpdate = true;
+    }
 })();

@@ -87,15 +87,17 @@ function render() {
 	analyser.getByteFrequencyData(waveData);
     cube.updateRotation(waveData);
     updateColor(waveData);
-
-    if (waveData[0] > sound_limit && (new Date().getTime() / 1000) - text.last_changed> 0.1) {
-        if (text.is_on) {
+    let cur_time = new Date().getTime() / 1000;
+    if (waveData[0] > sound_limit && cur_time - text.last_changed> 0.1) {
+        if (text.is_on && Math.random() > 0.6) {
             text.clearText();
         } else {
             let ind = Math.round(Math.random()*4-0.5);
-            text.updateText(text.words[ind], waveData[0] / 80);
+            let is_expand = Math.random() > 0.7 ? true : false;
+            text.updateText(text.words[ind], waveData[0] / 110, cur_time, is_expand);
         }  
     }
+    text.updateSize(cur_time);
 
     renderer.render(scene, camera);
 }
