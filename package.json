@@ -1,0 +1,22 @@
+{
+  "name": "vj-three",
+  "version": "1.0.0",
+  "description": "",
+  "main": "cube.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/karadaharu/vj-three.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/karadaharu/vj-three/issues"
+  },
+  "homepage": "https://github.com/karadaharu/vj-three#readme",
+  "dependencies": {
+    "kuromoji": "^0.1.1"
+  }
+}
