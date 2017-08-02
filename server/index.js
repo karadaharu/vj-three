@@ -7,6 +7,45 @@ var builder = kuromoji.builder({
   dicPath: 'node_modules/kuromoji/dict'
 });
 
+var Markov = function(word, hira) {
+  this.word = word;
+  this.hira = hira;
+  this.next_words = [];
+  this.next_counts = [];
+  this.next_probs = [];
+}
+
+Markov.prototype.add = function(next_word) {
+  var nex_w_ind = this.next_words.indexOf(next_word);
+  if (nex_w_ind > -1) {
+    this.next_counts[nex_w_ind] += 1;
+  } else {
+    this.next_words.push(next_word);
+    this.next_counts.push(1);
+  }
+}
+
+Markov.prototype.calc_prob = function() {
+  var sum = this.next_counts.reduce((a,b) => a+ b, 0);
+  var cur = 0;
+  for (var i = 0; i < this.next_counts.length; i++) {
+    cur += this.next_counts[i];
+    this.next_probs.push(cur*1.0/(sum*1.0));
+  }
+}
+
+Markov.prototype.get_next = function() {
+  var r = Math.random();
+  var i = 0;
+  while(this.next_probs[i] < r) {
+    i++;
+  }
+  return this.next_words[i];
+}
+
+var words = [];
+var markovs = [];
+
 // 形態素解析機を作るメソッド
 builder.build(function(err, tokenizer) {
   // 辞書がなかったりするとここでエラーになります(´・ω・｀)
@@ -17,8 +56,30 @@ builder.build(function(err, tokenizer) {
     if (err) throw err;
     var tokens = tokenizer.tokenize(data);
     for ( var i = 0, len = Object.keys(tokens).length; i < len; i++) {
-      console.log(tokens[i]["surface_form"]);
+      if ( i == len - 1) { continue; }
+      var ind = words.indexOf(tokens[i]["surface_form"]);
+      if (ind > -1) {
+        markovs[ind].add(tokens[i+1]["surface_form"]);
+      } else {
+        words.push(tokens[i]["surface_form"]);
+        var m = new Markov(tokens[i]["surface_form"], tokens[i]["pronunciation"]);
+        m.add(tokens[i+1]["surface_form"]);
+        markovs.push(m);
+      }
     }
+    for (var i = 0; i < markovs.length; i ++ ) {
+      markovs[i].calc_prob();
+    }
+    var start_i = words.indexOf('\n');
+    var sentence = '';
+    console.log();
+    var w = markovs[start_i].get_next();
+    while ( w !== '\n') {
+      sentence += w;
+      i = words.indexOf(w);
+      w = markovs[i].get_next();
+    }
+    console.log(sentence);
   });
 });
 
