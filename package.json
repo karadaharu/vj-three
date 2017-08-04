@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/karadaharu/vj-three#readme",
   "dependencies": {
+    "express": "^4.15.3",
     "kuromoji": "^0.1.1",
     "socket.io": "^2.0.3"
   }
