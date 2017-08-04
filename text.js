@@ -124,7 +124,7 @@
     window.Text.prototype.updateSize = function(cur_time) {
         if (!this.is_expand) {return;}
         let ellapsed_time = cur_time - this.start_time;
-        let cur_size = (this.target_size - this.orig_size) * Math.min(1.0, ellapsed_time)  + this.orig_size;
+        let cur_size = (this.target_size - this.orig_size) *  ellapsed_time  + this.orig_size;
         this.geometry.attributes.position.array = this.vertices.map(function(x) {return x * cur_size;});
         this.geometry.attributes.position.needsUpdate = true;
     }
