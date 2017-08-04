@@ -72,7 +72,7 @@ builder.build(function(err, tokenizer) {
     }
     var start_i = words.indexOf('\n');
     var sentence = '';
-    console.log();
+    console.log( JSON.stringify( markovs )  );
     var w = markovs[start_i].get_next();
     while ( w !== '\n') {
       sentence += w;
@@ -82,6 +82,3 @@ builder.build(function(err, tokenizer) {
     console.log(sentence);
   });
 });
-
-
-

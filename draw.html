@@ -11,7 +11,7 @@ canvas { width: 100%; height: 100% }
   <body>
     <script src="lib/three.min.js"></script>
     <script src="lib/dat.gui.min.js"></script>
-
+    <script src="/socket.io/socket.io.js"></script>
     <script id="vertexShader" type="x-shader/x-vertex">
 // three.jsが予め定義してるuniform変数
 uniform mat4 modelMatrix;  // モデル変換行列
@@ -45,9 +45,10 @@ void main(){
     gl_FragColor = color;
   }
 }
-    </script>   		
-    <script src="cube.js"></script>
-    <script src="text.js"></script>
-    <script src="group.js"></script>
+    </script>
+    <script src="js/cube.js"></script>
+    <script src="js/text.js"></script>
+    <script src="js/group.js"></script>
+    <script src="js/client.js"></script>
   </body>
 </html>
