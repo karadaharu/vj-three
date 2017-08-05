@@ -63,7 +63,7 @@ function updateColor(waveData) {
 
 var cube = new window.Cube(scene);
 var text = new window.Text(scene);
-
+var socket = new window.Socket();
 
 var Controller = function() {
   this.speed = 0.1;
@@ -88,14 +88,17 @@ function render() {
   cube.updateRotation(waveData);
   updateColor(waveData);
   let cur_time = new Date().getTime() / 1000;
-  if (waveData[0] > sound_limit && cur_time - text.last_changed> 0.1) {
-    if (text.is_on && Math.random() > 0.6) {
-      text.clearText();
-    } else {
-      let ind = Math.round(Math.random()*4-0.5);
-      let is_expand = Math.random() > 0.7 ? true : false;
-      text.updateText(text.words[ind], waveData[0] / 110, cur_time, is_expand);
-    }  
+  if (waveData[0] > sound_limit && cur_time - text.last_changed> 0.2) {
+    socket.getSentence();
+    let is_expand = Math.random() > 0.7 ? true : false;
+    text.updateText(socket.msg, waveData[0] / 110, cur_time, is_expand);
+    // if (text.is_on && Math.random() > 0.6) {
+    //   text.clearText();
+    // } else {
+    //   let ind = Math.round(Math.random()*4-0.5);
+    //   let is_expand = Math.random() > 0.7 ? true : false;
+    //   text.updateText(text.words[ind], waveData[0] / 110, cur_time, is_expand);
+    // }
   }
   text.updateSize(cur_time);
 
