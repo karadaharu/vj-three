@@ -6,13 +6,19 @@
     this.socketio.on("publish", (data) => { 
       this.addMessage(data.value); 
     });
+    this.sound_limit = 256;
+    this.socketio.on("onchange", (values) => {
+      for ( var key in values ) {
+        this[key] = values[key];
+      }
+    });
   }
 
   window.Socket.prototype.addMessage = function(msg) {
     this.msg = msg;
     console.log(msg);
-    var m = document.getElementById("message");
-    m.textContent = msg;
+    // var m = document.getElementById("message");
+    // m.textContent = msg;
   };
 
   window.Socket.prototype.getSentence = function() {

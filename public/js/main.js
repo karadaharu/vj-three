@@ -65,20 +65,6 @@ var cube = new window.Cube(scene);
 var text = new window.Text(scene);
 var socket = new window.Socket();
 
-var Controller = function() {
-  this.speed = 0.1;
-}
-
-var controller = new Controller();
-var gui = new dat.GUI({
-});
-
-var sound_limit = 200;
-var speed_gui = gui.add(controller, 'speed', 0, 255);
-speed_gui.onFinishChange(function(value){
-  sound_limit = value;
-});
-
 // Update
 function render() {
   requestAnimationFrame(render);
@@ -88,10 +74,10 @@ function render() {
   cube.updateRotation(waveData);
   updateColor(waveData);
   let cur_time = new Date().getTime() / 1000;
-  if (waveData[0] > sound_limit && cur_time - text.last_changed> 0.2) {
+  if (waveData[10] > socket.sound_limit && cur_time - text.last_changed> 0.20) {
     socket.getSentence();
     let is_expand = Math.random() > 0.7 ? true : false;
-    text.updateText(socket.msg, waveData[0] / 110, cur_time, is_expand);
+    text.updateText(socket.msg, waveData[0] / 180, cur_time, is_expand);
     // if (text.is_on && Math.random() > 0.6) {
     //   text.clearText();
     // } else {
