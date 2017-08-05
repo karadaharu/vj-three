@@ -70,15 +70,11 @@ builder.build(function(err, tokenizer) {
     for (var i = 0; i < markovs.length; i ++ ) {
       markovs[i].calc_prob();
     }
-    var start_i = words.indexOf('\n');
-    var sentence = '';
-    console.log( JSON.stringify( markovs )  );
-    var w = markovs[start_i].get_next();
-    while ( w !== '\n') {
-      sentence += w;
-      i = words.indexOf(w);
-      w = markovs[i].get_next();
-    }
-    console.log(sentence);
+
+    var markovs_json = JSON.stringify( markovs );
+    var words_json = JSON.stringify( words );
+    fs.writeFile('markovs.json', markovs_json, 'utf8');
+    fs.writeFile('words.json', words_json, 'utf8');
+
   });
 });
