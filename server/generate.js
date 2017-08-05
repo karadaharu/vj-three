@@ -1,23 +1,8 @@
-var fs = require('fs');
-var makorvs, words;
-var p_markovs = new Promise((resolve, reject) => {
-  fs.readFile('markovs.json', 'utf8', (err, data) => {
-    if (err) {
-      reject(err);
-      return;
-    }
-    resolve(data);
-  });
-});
-var p_words = new Promise((resolve, reject) => {
-  fs.readFile('words.json', 'utf8', (err, data) => {
-    if (err) {
-      reject(err);
-      return;
-    }
-    resolve(data);
-  });
-});
+var Bot = function(markovs, words) {
+  this.markovs = markovs;
+  this.words = words;
+}
+
 
 var Markov = function(data) {
   this.word = data['word'];
@@ -35,21 +20,47 @@ Markov.prototype.get_next = function() {
   return this.next_words[i];
 }
 
-Promise.all([p_markovs, p_words]).then(function(values) {
-  markovs_json = JSON.parse(values[0]); //now it an object
-  markovs = markovs_json.map((m) => {return new Markov(m);});
-  words = JSON.parse(values[1]); //now it an object
-  var start_i = words.indexOf('\n');
-
+Bot.prototype.gen_sentence = function() {
+  var start_i = this.words.indexOf('\n');
   var sentence = '';
-  var w = markovs[start_i].get_next();
+  var w = this.markovs[start_i].get_next();
 
   while ( w !== '\n') {
     sentence += w;
-    i = words.indexOf(w);
-    w = markovs[i].get_next();
+    i = this.words.indexOf(w);
+    w = this.markovs[i].get_next();
   }
-  console.log(sentence);
-}, function(reason){
-  console.log(reason);
-});
+  return sentence;
+}
+
+module.exports.build = function(callback) {
+  var fs = require('fs');
+  var p_markovs = new Promise((resolve, reject) => {
+    fs.readFile('markovs.json', 'utf8', (err, data) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(data);
+    });
+  });
+  var p_words = new Promise((resolve, reject) => {
+    fs.readFile('words.json', 'utf8', (err, data) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(data);
+    });
+  });
+
+  Promise.all([p_markovs, p_words]).then( (values) => {
+    var markovs_json = JSON.parse(values[0]); //now it an object
+    var markovs = markovs_json.map((m) => {return new Markov(m);});
+    var words = JSON.parse(values[1]); //now it an object
+    var bot = new Bot(markovs, words);
+    callback(bot);
+  }, function(reason){
+    console.log(reason);
+  });
+}
