@@ -12,6 +12,9 @@ app.get('/', function(req, res){
 app.get('/controller', function(req, res){
   res.sendFile(path.resolve('controller.html'));
 });
+app.get('/sample', function(req, res){
+  res.sendFile(path.resolve('shader.html'));
+});
 app.use(express.static('public'));
 http.listen(3000, function(){
   console.log('listening on *:3000');

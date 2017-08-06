@@ -64,6 +64,7 @@ function updateColor(waveData) {
 var cube = new window.Cube(scene);
 var text = new window.Text(scene);
 var socket = new window.Socket();
+var check = new window.Check(scene, window.innerWidth, window.innerHeight);
 
 // Update
 function render() {
