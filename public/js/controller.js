@@ -26,6 +26,7 @@
   var Controller = function() {
     this.sound_limit = 0.1;
     this.is_gif = false;
+    this.is_text = false;
   }
   
   var controller = new Controller();
@@ -34,6 +35,7 @@
   
   var sound_limit = gui.add(controller, 'sound_limit', 0, 255);
   var is_gif = gui.add(controller, 'is_gif');
+  var is_text = gui.add(controller, 'is_text');
 
   sound_limit.onFinishChange(function(value){
     socket.io.emit('change', {sound_limit:value});
@@ -41,6 +43,10 @@
 
   is_gif.onFinishChange(function(value){
     socket.io.emit('change', {is_gif:value});
+  });
+
+  is_text.onFinishChange(function(value){
+    socket.io.emit('change', {is_text:value});
   });
 
 })();
