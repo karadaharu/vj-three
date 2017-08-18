@@ -75,6 +75,11 @@ var onChangeCallback = function(values){
     } else if (key == 'words') {
       text.words = values[key].split(",");
       text.n_words = text.words.length;
+    } else if (key == 'gif_add') {
+      gif.imgs[gif.n_imgs++] = values[key]+'.gif';
+    } else if (key == 'gif_remove') {
+      gif.imgs = gif.imgs.filter((name) => { return name !== values[key]+'.gif' ? name : null});
+      gif.n_imgs = gif.imgs.length;
     }
   }
 }

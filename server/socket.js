@@ -5,6 +5,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var gen = require('./generate');
 var sample3 = require('./sample3');
+var fs = require('fs');
 
 app.get('/', function(req, res){
   res.sendFile(path.resolve('draw.html'));
@@ -20,6 +21,7 @@ http.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
+var img_path = path.resolve('./public/img/');
 
 gen.build( (bot) => {
   var bot = bot;
@@ -36,5 +38,12 @@ gen.build( (bot) => {
       console.log(values);
       socket.broadcast.emit("onchange", values);
     });
+
+    fs.watch(img_path, { encoding: 'buffer' }, (eventType, filename) => {
+      fs.readdir(img_path, (err, files) => {
+        socket.broadcast.emit("file_change", files);
+      })
+    });
+
   });
 });
