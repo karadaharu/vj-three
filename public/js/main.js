@@ -64,10 +64,12 @@ function updateColor(waveData) {
 
 var onChangeCallback = function(values){
   for ( var key in values ) {
-    if ( key == 'is_text' && values[key] == false ) {
-      text.clearText();
+    if ( key == 'is_text') {
+      text.changeVisible(values[key]);
     } else if ( key == 'is_gif' && values[key] == true) {
       scene.background = null;
+    } else if (key == 'is_cube') {
+      cube.changeVisible(values[key]);
     }
   }
 }
@@ -89,7 +91,9 @@ function render() {
   analyser.getByteFrequencyData(waveData);
 
   // cube
-  cube.updateRotation(waveData);
+  if (socket.is_cube) {
+    cube.updateRotation(waveData);
+  }
 
   if (!socket.is_gif) {
     updateColor(waveData);
@@ -97,10 +101,12 @@ function render() {
 
   let cur_time = new Date().getTime() / 1000;
   if (waveData[10] > socket.sound_limit && cur_time - text.last_changed> 0.20) {
-    gif.changeGif();
-    socket.getSentence();
-    let is_expand = Math.random() > 0.7 ? true : false;
+    if (socket.is_gif) {
+      gif.changeGif();
+    }
     if (socket.is_text) {
+      socket.getSentence();
+      let is_expand = Math.random() > 0.7 ? true : false;
       if (text.is_on && Math.random() > 0.6) {
         text.clearText();
       } else {

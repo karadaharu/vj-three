@@ -9,6 +9,7 @@
     this.sound_limit = 256;
     this.is_gif = false;
     this.is_text = false;
+    this.is_cube = false;
     this.socketio.on("onchange", (values) => {
       this.onChange(values);
       for ( var key in values ) {

@@ -138,5 +138,9 @@
       this.txtCanvasCtx.fillText(
           this.txt, (this.canvasWidth)/2, this.char_size
           );
-    }
+    };
+
+    window.Text.prototype.changeVisible = function(is_visible) {
+      this.mesh.visible = is_visible;
+    };
 })();

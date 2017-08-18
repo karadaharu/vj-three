@@ -27,4 +27,10 @@
             }
         } 
     };
+
+    window.Cube.prototype.changeVisible = function(is_visible) {
+      for (i = 0; i < this.n_cubes; i++) {
+        this.cubes[i].visible = is_visible;
+      }
+    }
 })();
