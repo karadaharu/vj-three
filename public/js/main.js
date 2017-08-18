@@ -1,20 +1,3 @@
-imgs = ['hanabi.gif', 'eye.gif'];
-var n_imgs = imgs.length;
-var cur_img = 1;
-var gif = document.createElement('img');
-gif.setAttribute('src', 'img/'+imgs[cur_img]);
-gif.setAttribute('width', window.innerWidth);
-document.body.appendChild(gif);
-
-window.onclick = function() {
-  cur_img = cur_img + 1;
-  if (n_imgs - 1 < cur_img) {
-    cur_img = 0;
-  }
-  console.log('aa');
-  gif.setAttribute('src', 'img/'+imgs[cur_img]);
-}
-
 // AUDIO
 window.AudioContext = window.webkitAudioContext || window.AudioContext;
 let context = new AudioContext();
@@ -79,43 +62,60 @@ function updateColor(waveData) {
   }
 }
 
-// var cube = new window.Cube(scene);
+var onChangeCallback = function(values){
+  for ( var key in values ) {
+    if ( key == 'is_text' && values[key] == false ) {
+      text.clearText();
+    } else if ( key == 'is_gif' && values[key] == true) {
+      scene.background = null;
+    }
+  }
+}
+
+var cube = new window.Cube(scene);
 var text = new window.Text(scene);
-var socket = new window.Socket();
+var socket = new window.Socket(onChangeCallback);
+var gif = new window.Gif();
 // var check = new window.Check(scene, window.innerWidth, window.innerHeight);
+var stats = new Stats();
+stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild( stats.dom );
 
 // Update
 function render() {
-  requestAnimationFrame(render);
+  stats.begin();
 
   let waveData = new Uint8Array(analyser.frequencyBinCount);
   analyser.getByteFrequencyData(waveData);
 
   // cube
-  // cube.updateRotation(waveData);
+  cube.updateRotation(waveData);
 
   if (!socket.is_gif) {
     updateColor(waveData);
-  } else {
-    scene.background = null;
-    renderer.setClearColor( 0x000000, 0 );
   }
 
   let cur_time = new Date().getTime() / 1000;
   if (waveData[10] > socket.sound_limit && cur_time - text.last_changed> 0.20) {
+    gif.changeGif();
     socket.getSentence();
     let is_expand = Math.random() > 0.7 ? true : false;
-    text.updateText(socket.msg, waveData[0] / 180, cur_time, is_expand);
-    // if (text.is_on && Math.random() > 0.6) {
-    //   text.clearText();
-    // } else {
-    //   let ind = Math.round(Math.random()*4-0.5);
-    //   let is_expand = Math.random() > 0.7 ? true : false;
-    //   text.updateText(text.words[ind], waveData[0] / 110, cur_time, is_expand);
-    // }
+    if (socket.is_text) {
+      if (text.is_on && Math.random() > 0.6) {
+        text.clearText();
+      } else {
+        let ind = Math.round(Math.random()*4-0.5);
+        let is_expand = Math.random() > 0.7 ? true : false;
+        // text.updateText(text.words[ind], waveData[0] / 110, cur_time, is_expand);
+        text.updateText(socket.msg, waveData[0] / 110, cur_time, is_expand);
+      }
+    }
   }
   text.updateSize(cur_time);
 
   renderer.render(scene, camera);
+  stats.end();
+
+  requestAnimationFrame(render);
 }
 render();
