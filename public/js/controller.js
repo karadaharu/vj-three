@@ -29,18 +29,20 @@
     this.is_text = false;
     this.is_cube = false;
     this.is_glitch = false;
+    this.is_gen_txt = false;
+    this.words = '夏,HONGO SALOON,ようこそ';
   }
   
   var controller = new Controller();
   var gui = new dat.GUI({
   });
   
-  var names = ['is_gif', 'is_text', 'is_cube', 'is_glitch', 'sound_limit'];
+  var names = ['is_gif', 'is_text', 'is_cube', 'is_glitch','is_gen_txt', 'words', 'sound_limit'];
   var buttons = [];
   for (var i = 0, len = names.length - 1; i < len; i++) {
     buttons[i] = gui.add(controller, names[i]);
   }
-  buttons[names.length-1] = gui.add(controller, 'sound_limit', 0, 255);
+  buttons[6] = gui.add(controller, 'sound_limit', 0, 255);
 
   buttons.map((button, i) => {
     button.onFinishChange((value)=>{

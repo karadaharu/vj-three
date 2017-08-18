@@ -72,6 +72,9 @@ var onChangeCallback = function(values){
       cube.changeVisible(values[key]);
     } else if (key == 'is_glitch') {
       glitchPass.enabled = values[key];
+    } else if (key == 'words') {
+      text.words = values[key].split(",");
+      text.n_words = text.words.length;
     }
   }
 }
@@ -150,15 +153,20 @@ function render() {
       gif.changeGif();
     }
     if (socket.is_text) {
-      socket.getSentence();
+      if (socket.is_gen_txt) {
+        socket.getSentence();
+      }
       let is_expand = Math.random() > 0.7 ? true : false;
       if (text.is_on && Math.random() > 0.6) {
         text.clearText();
       } else {
-        let ind = Math.round(Math.random()*4-0.5);
         let is_expand = Math.random() > 0.7 ? true : false;
-        // text.updateText(text.words[ind], waveData[0] / 110, cur_time, is_expand);
-        text.updateText(socket.msg, waveData[0] / 110, cur_time, is_expand);
+        if (socket.is_gen_txt) {
+          text.updateText(socket.msg, waveData[0] / 200, cur_time, is_expand);
+        } else {
+          let ind = Math.round(Math.random()*text.n_words-0.5);
+          text.updateText(text.words[ind], waveData[0] / 200, cur_time, is_expand);
+        }
       }
     }
   }

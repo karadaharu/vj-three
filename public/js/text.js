@@ -3,6 +3,7 @@
       // canvas要素
       this.txt = '大丈夫だよねだよねそうだよね';
       this.words = ['大丈夫', '納豆', '夏', 'うなぎ', 'です', '愛'];
+      this.n_words = this.words.length;
       this.n_char = this.txt.length;
       this.color = '#ffffff';
       this.char_size = 512;
