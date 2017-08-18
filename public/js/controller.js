@@ -24,17 +24,23 @@
 
 
   var Controller = function() {
-    this.speed = 0.1;
+    this.sound_limit = 0.1;
+    this.is_gif = false;
   }
   
   var controller = new Controller();
   var gui = new dat.GUI({
   });
   
-  var sound_limit = 200;
-  var speed_gui = gui.add(controller, 'speed', 0, 255);
-  speed_gui.onFinishChange(function(value){
+  var sound_limit = gui.add(controller, 'sound_limit', 0, 255);
+  var is_gif = gui.add(controller, 'is_gif');
+
+  sound_limit.onFinishChange(function(value){
     socket.io.emit('change', {sound_limit:value});
+  });
+
+  is_gif.onFinishChange(function(value){
+    socket.io.emit('change', {is_gif:value});
   });
 
 })();

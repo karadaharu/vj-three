@@ -34,7 +34,7 @@ navigator.getUserMedia(
 
 // Scene
 let scene = new THREE.Scene();
-
+var transparent = new THREE.Color( 0x000000 );
 // Renderer
 let renderer = new THREE.WebGLRenderer({ alpha: true });
 renderer.setClearColor(0x000000, 0);
@@ -94,7 +94,12 @@ function render() {
   // cube
   // cube.updateRotation(waveData);
 
-  // updateColor(waveData);
+  if (!socket.is_gif) {
+    updateColor(waveData);
+  } else {
+    scene.background = null;
+    renderer.setClearColor( 0x000000, 0 );
+  }
 
   let cur_time = new Date().getTime() / 1000;
   if (waveData[10] > socket.sound_limit && cur_time - text.last_changed> 0.20) {
