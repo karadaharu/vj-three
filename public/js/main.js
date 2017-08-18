@@ -70,6 +70,8 @@ var onChangeCallback = function(values){
       scene.background = null;
     } else if (key == 'is_cube') {
       cube.changeVisible(values[key]);
+    } else if (key == 'is_glitch') {
+      glitchPass.enabled = values[key];
     }
   }
 }
@@ -89,10 +91,7 @@ var composer = new THREE.EffectComposer(renderer);
 var renderPass = new THREE.RenderPass(scene, camera);
 composer.addPass(renderPass);
 
-var sepiaPass = new THREE.ShaderPass(THREE.SepiaShader);
-composer.addPass(sepiaPass);
-
-var glitchPass = new THREE.GlitchPass(0);
+var glitchPass = new THREE.GlitchPass();
 composer.addPass(glitchPass);
 
 //custom shader pass
@@ -115,8 +114,8 @@ var myEffect = {
     "void main() {",
     "vec4 color = texture2D( tDiffuse, vUv );",
     "vec3 c = color.rgb;",
-    "color.r = c.r * 2.0;",
-    "color.g = c.g / 1.2;",
+    "color.r = c.r;",
+    "color.g = c.g;",
     "color.b = c.b;",
     "gl_FragColor = vec4( color.rgb , color.a );",
     "}"
