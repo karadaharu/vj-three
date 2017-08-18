@@ -125,7 +125,7 @@ var myEffect = {
 var customPass = new THREE.ShaderPass(myEffect);
 customPass.renderToScreen = true;
 composer.addPass(customPass);
-
+var last_changed = 0;
 
 // Update
 function render() {
@@ -144,7 +144,8 @@ function render() {
   }
 
   let cur_time = new Date().getTime() / 1000;
-  if (waveData[10] > socket.sound_limit && cur_time - text.last_changed> 0.20) {
+  if (waveData[10] > socket.sound_limit && cur_time - last_changed> 0.25) {
+    last_changed = cur_time;
     if (socket.is_gif) {
       gif.changeGif();
     }
