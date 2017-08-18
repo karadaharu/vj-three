@@ -1,3 +1,8 @@
+var gif = document.createElement('img');
+gif.setAttribute('src', 'img/hanabi.gif');
+gif.setAttribute('width', window.innerWidth);
+document.body.appendChild(gif);
+
 // AUDIO
 window.AudioContext = window.webkitAudioContext || window.AudioContext;
 let context = new AudioContext();
@@ -19,7 +24,8 @@ navigator.getUserMedia(
 let scene = new THREE.Scene();
 
 // Renderer
-let renderer = new THREE.WebGLRenderer();
+let renderer = new THREE.WebGLRenderer({ alpha: true });
+renderer.setClearColor(0x000000, 0);
 renderer.setSize( window.innerWidth, window.innerHeight );
 renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
 document.body.appendChild( renderer.domElement );
@@ -61,10 +67,10 @@ function updateColor(waveData) {
   }
 }
 
-var cube = new window.Cube(scene);
+// var cube = new window.Cube(scene);
 var text = new window.Text(scene);
 var socket = new window.Socket();
-var check = new window.Check(scene, window.innerWidth, window.innerHeight);
+// var check = new window.Check(scene, window.innerWidth, window.innerHeight);
 
 // Update
 function render() {
@@ -72,8 +78,12 @@ function render() {
 
   let waveData = new Uint8Array(analyser.frequencyBinCount);
   analyser.getByteFrequencyData(waveData);
-  cube.updateRotation(waveData);
-  updateColor(waveData);
+
+  // cube
+  // cube.updateRotation(waveData);
+
+  // updateColor(waveData);
+
   let cur_time = new Date().getTime() / 1000;
   if (waveData[10] > socket.sound_limit && cur_time - text.last_changed> 0.20) {
     socket.getSentence();
