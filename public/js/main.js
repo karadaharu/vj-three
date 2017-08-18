@@ -1,7 +1,19 @@
+imgs = ['hanabi.gif', 'eye.gif'];
+var n_imgs = imgs.length;
+var cur_img = 1;
 var gif = document.createElement('img');
-gif.setAttribute('src', 'img/hanabi.gif');
+gif.setAttribute('src', 'img/'+imgs[cur_img]);
 gif.setAttribute('width', window.innerWidth);
 document.body.appendChild(gif);
+
+window.onclick = function() {
+  cur_img = cur_img + 1;
+  if (n_imgs - 1 < cur_img) {
+    cur_img = 0;
+  }
+  console.log('aa');
+  gif.setAttribute('src', 'img/'+imgs[cur_img]);
+}
 
 // AUDIO
 window.AudioContext = window.webkitAudioContext || window.AudioContext;
