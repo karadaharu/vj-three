@@ -83,6 +83,51 @@ var stats = new Stats();
 stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
 document.body.appendChild( stats.dom );
 
+// Post processing
+var composer = new THREE.EffectComposer(renderer);
+
+var renderPass = new THREE.RenderPass(scene, camera);
+composer.addPass(renderPass);
+
+var sepiaPass = new THREE.ShaderPass(THREE.SepiaShader);
+composer.addPass(sepiaPass);
+
+var glitchPass = new THREE.GlitchPass(0);
+composer.addPass(glitchPass);
+
+//custom shader pass
+var myEffect = {
+  uniforms: {
+    "tDiffuse": { value: null },
+    "amount":   { value: 1.0 }
+  },
+  vertexShader: [
+    "varying vec2 vUv;",
+    "void main() {",
+    "vUv = uv;",
+    "gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+    "}"
+  ].join( "\n" ),
+  fragmentShader: [
+    "uniform float amount;",
+    "uniform sampler2D tDiffuse;",
+    "varying vec2 vUv;",
+    "void main() {",
+    "vec4 color = texture2D( tDiffuse, vUv );",
+    "vec3 c = color.rgb;",
+    "color.r = c.r * 2.0;",
+    "color.g = c.g / 1.2;",
+    "color.b = c.b;",
+    "gl_FragColor = vec4( color.rgb , color.a );",
+    "}"
+  ].join( "\n" )
+}
+
+var customPass = new THREE.ShaderPass(myEffect);
+customPass.renderToScreen = true;
+composer.addPass(customPass);
+
+
 // Update
 function render() {
   stats.begin();
@@ -119,7 +164,8 @@ function render() {
   }
   text.updateSize(cur_time);
 
-  renderer.render(scene, camera);
+  composer.render();
+  // renderer.render(scene, camera);
   stats.end();
 
   requestAnimationFrame(render);
