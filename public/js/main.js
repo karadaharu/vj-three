@@ -87,7 +87,12 @@ var onChangeCallback = function(values){
 var cube = new window.Cube(scene);
 var text = new window.Text(scene);
 var socket = new window.Socket(onChangeCallback);
+var morph = new window.Morph(scene);
 var gif = new window.Gif();
+
+cube.changeVisible(false);
+text.changeVisible(false);
+
 // var check = new window.Check(scene, window.innerWidth, window.innerHeight);
 var stats = new Stats();
 stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
@@ -101,7 +106,7 @@ composer.addPass(renderPass);
 
 var glitchPass = new THREE.GlitchPass();
 composer.addPass(glitchPass);
-
+glitchPass.enabled = false;
 //custom shader pass
 var myEffect = {
   uniforms: {
@@ -131,6 +136,7 @@ var myEffect = {
 }
 
 var customPass = new THREE.ShaderPass(myEffect);
+var cur_time = 0;
 customPass.renderToScreen = true;
 composer.addPass(customPass);
 var last_changed = 0;
@@ -151,7 +157,11 @@ function render() {
     updateColor(waveData);
   }
 
-  let cur_time = new Date().getTime() / 1000;
+
+  cur_time = new Date().getTime() / 1000;
+  morph.morph(cur_time);
+  morph.mesh.rotation.y += 0.01;
+  morph.mesh.rotation.z += 0.01;
   if (waveData[10] > socket.sound_limit && cur_time - last_changed> 0.25) {
     last_changed = cur_time;
     if (socket.is_gif) {
@@ -178,7 +188,6 @@ function render() {
   text.updateSize(cur_time);
 
   composer.render();
-  // renderer.render(scene, camera);
   stats.end();
 
   requestAnimationFrame(render);
