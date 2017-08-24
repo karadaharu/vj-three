@@ -86,9 +86,6 @@ var onChangeCallback = function(values){
       morph.spb = 60/values[key];
     } else if (key == 'mirror_mode') {
       customPass.material.uniforms.mode.value = values[key];
-      customPass.material.needsUpdate = true;
-      // myEffect.uniforms.mode = values[key];
-      console.log(customPass.material.needsUpdate);
     }
   }
 }
@@ -133,10 +130,20 @@ var myEffect = {
     "uniform float mode;",
     "uniform sampler2D tDiffuse;",
     "varying vec2 vUv;",
+    "float round(float x) {",
+    " if(fract(x)>0.5){",
+    "return ceil(x);",
+    "}else{",
+    "return floor(x);}",
+    "}",
     "void main() {",
     "vec2 p = vUv;",
     "if (p.x < 0.5 && (mode == 1.0||mode == 3.0)) p.x = 1.0 - p.x;",
     "if (p.y < 0.5 && (mode == 2.0||mode == 3.0)) p.y = 1.0 - p.y;",
+    "if (mode == 4.0) {",
+    " p.x = 0.25*abs(p.x/0.25 - round(p.x/0.25))+0.5;",
+    " p.y = 0.25*abs(p.y/0.25 - round(p.y/0.25))+0.5;",
+    "}",
     "vec4 color = texture2D( tDiffuse, p );",
     "vec3 c = color.rgb;",
     "color.r = c.r;",
@@ -179,7 +186,7 @@ function render() {
   }
   if (waveData[10] > socket.sound_limit && cur_time - last_changed> 0.25) {
     last_changed = cur_time;
-    if (socket.is_gif) {
+    if (socket.is_gif && Math.random() > 0.7) {
       gif.changeGif();
     }
     if (socket.is_text) {
@@ -190,12 +197,12 @@ function render() {
       if (text.is_on && Math.random() > 0.6) {
         text.clearText();
       } else {
-        let is_expand = Math.random() > 0.7 ? true : false;
+        let is_expand = Math.random() > 0.3 ? true : false;
         if (socket.is_gen_txt) {
-          text.updateText(socket.msg, waveData[0] / 200, cur_time, is_expand);
+          text.updateText(socket.msg, waveData[0] * socket.text_size / 200, cur_time, is_expand);
         } else {
           let ind = Math.round(Math.random()*text.n_words-0.5);
-          text.updateText(text.words[ind], waveData[0] / 200, cur_time, is_expand);
+          text.updateText(text.words[ind], waveData[0]* socket.text_size / 200, cur_time, is_expand);
         }
       }
     }
