@@ -80,6 +80,15 @@ var onChangeCallback = function(values){
     } else if (key == 'gif_remove') {
       gif.imgs = gif.imgs.filter((name) => { return name !== values[key]+'.gif' ? name : null});
       gif.n_imgs = gif.imgs.length;
+    } else if (key == 'is_morph') {
+      morph.mesh.visible = values[key];
+    } else if (key == 'bpm') {
+      morph.spb = 60/values[key];
+    } else if (key == 'mirror_mode') {
+      customPass.material.uniforms.mode.value = values[key];
+      customPass.material.needsUpdate = true;
+      // myEffect.uniforms.mode = values[key];
+      console.log(customPass.material.needsUpdate);
     }
   }
 }
@@ -111,7 +120,7 @@ glitchPass.enabled = false;
 var myEffect = {
   uniforms: {
     "tDiffuse": { value: null },
-    "amount":   { value: 1.0 }
+    "mode":   { value: 2.0 }
   },
   vertexShader: [
     "varying vec2 vUv;",
@@ -121,11 +130,14 @@ var myEffect = {
     "}"
   ].join( "\n" ),
   fragmentShader: [
-    "uniform float amount;",
+    "uniform float mode;",
     "uniform sampler2D tDiffuse;",
     "varying vec2 vUv;",
     "void main() {",
-    "vec4 color = texture2D( tDiffuse, vUv );",
+    "vec2 p = vUv;",
+    "if (p.x < 0.5 && (mode == 1.0||mode == 3.0)) p.x = 1.0 - p.x;",
+    "if (p.y < 0.5 && (mode == 2.0||mode == 3.0)) p.y = 1.0 - p.y;",
+    "vec4 color = texture2D( tDiffuse, p );",
     "vec3 c = color.rgb;",
     "color.r = c.r;",
     "color.g = c.g;",
@@ -138,6 +150,7 @@ var myEffect = {
 var customPass = new THREE.ShaderPass(myEffect);
 var cur_time = 0;
 customPass.renderToScreen = true;
+// console.log(customPass.uniforms.amount = 0);
 composer.addPass(customPass);
 var last_changed = 0;
 
@@ -160,8 +173,10 @@ function render() {
 
   cur_time = new Date().getTime() / 1000;
   morph.morph(cur_time);
-  morph.mesh.rotation.y += 0.01;
-  morph.mesh.rotation.z += 0.01;
+  if (morph.is_ready) {
+    morph.mesh.rotation.y += 0.01;
+    morph.mesh.rotation.z += 0.01;
+  }
   if (waveData[10] > socket.sound_limit && cur_time - last_changed> 0.25) {
     last_changed = cur_time;
     if (socket.is_gif) {

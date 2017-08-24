@@ -12,6 +12,8 @@
     this.is_cube = false;
     this.is_glitch = false;
     this.is_gen_txt = false;
+    this.mirror_mode = 0;
+    this.bpm = 120;
     this.socketio.on("onchange", (values) => {
       this.onChange(values);
       for ( var key in values ) {

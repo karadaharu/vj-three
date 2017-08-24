@@ -56,19 +56,24 @@
     this.is_cube = false;
     this.is_glitch = false;
     this.is_gen_txt = false;
+    this.is_morph = false;
     this.words = '夏,HONGO SALOON,ようこそ';
+    this.bpm = 120;
+    this.mirror_mode = 0;
   }
   
   var controller = new Controller();
   var gui = new dat.GUI({
   });
   
-  var names = ['is_gif', 'is_text', 'is_cube', 'is_glitch','is_gen_txt', 'words', 'sound_limit'];
+  var names = ['is_gif', 'is_text', 'is_cube', 'is_glitch','is_gen_txt', 'is_morph','words', 'sound_limit', 'bpm', 'mirror_mode'];
   var buttons = [];
   for (var i = 0, len = names.length - 1; i < len; i++) {
     buttons[i] = gui.add(controller, names[i]);
   }
-  buttons[6] = gui.add(controller, 'sound_limit', 0, 255);
+  buttons[7] = gui.add(controller, 'sound_limit', 0, 255);
+  buttons[8] = gui.add(controller, 'bpm', 0, 255);
+  buttons[9] = gui.add(controller, 'mirror_mode', 0, 3).step(1);
 
   var gifs = gui.addFolder('GIF');
 
