@@ -57,25 +57,30 @@
     this.is_glitch = false;
     this.is_gen_txt = false;
     this.is_morph = false;
+    this.is_morph_rand = false;
     this.words = '夏,HONGO SALOON,ようこそ';
     this.bpm = 120;
     this.mirror_mode = 0;
     this.text_size = 1;
+    this.morph_size = 100;
   }
   
   var controller = new Controller();
   var gui = new dat.GUI({
   });
   
-  var names = ['is_gif', 'is_text', 'is_cube', 'is_glitch','is_gen_txt', 'is_morph','words', 'sound_limit', 'bpm', 'mirror_mode', 'text_size'];
+  var names = ['is_gif', 'is_text', 'is_cube', 'is_glitch','is_gen_txt', 'is_morph','is_morph_rand','words', 'sound_limit', 'bpm', 'mirror_mode', 'text_size', 'morph_size'];
   var buttons = [];
-  for (var i = 0, len = 7; i < len; i++) {
+  for (var i = 0, len = 8; i < len; i++) {
     buttons[i] = gui.add(controller, names[i]);
   }
-  buttons[7] = gui.add(controller, 'sound_limit', 0, 255);
-  buttons[8] = gui.add(controller, 'bpm', 0, 255);
-  buttons[9] = gui.add(controller, 'mirror_mode', 0, 4).step(1);
-  buttons[10] = gui.add(controller, 'text_size', 0, 10);
+  var l = 8;
+  buttons[l] = gui.add(controller, 'sound_limit', 0, 255);
+  buttons[l+1] = gui.add(controller, 'bpm', 0, 255);
+  buttons[l+2] = gui.add(controller, 'mirror_mode', 0, 4).step(1);
+  buttons[l+3] = gui.add(controller, 'text_size', 0, 10);
+  buttons[l+4] = gui.add(controller, 'morph_size', 0, 200);
+
 
   var gifs = gui.addFolder('GIF');
 

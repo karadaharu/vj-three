@@ -16,6 +16,9 @@ app.get('/controller', function(req, res){
 app.get('/sample', function(req, res){
   res.sendFile(path.resolve('shader.html'));
 });
+app.get('/sample2', function(req, res){
+  res.sendFile(path.resolve('morph.html'));
+});
 app.use(express.static('public'));
 http.listen(3000, function(){
   console.log('listening on *:3000');
@@ -23,9 +26,13 @@ http.listen(3000, function(){
 
 var img_path = path.resolve('./public/img/');
 
+
 gen.build( (bot) => {
   var bot = bot;
   io.on('connection', function(socket){
+    fs.readdir(img_path, (err, files) => {
+      socket.emit("file_change", files);
+    });
     console.log('a user connected');
 
     socket.on('get', () => {

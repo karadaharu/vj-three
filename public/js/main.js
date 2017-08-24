@@ -86,6 +86,8 @@ var onChangeCallback = function(values){
       morph.spb = 60/values[key];
     } else if (key == 'mirror_mode') {
       customPass.material.uniforms.mode.value = values[key];
+    } else if (key == 'morph_size') {
+      morph.mesh.position.z = -values[key];
     }
   }
 }
@@ -188,6 +190,9 @@ function render() {
     last_changed = cur_time;
     if (socket.is_gif && Math.random() > 0.7) {
       gif.changeGif();
+    }
+    if (socket.is_morph_rand && Math.random() > 0.7) {
+      morph.mesh.position.z = -Math.pow(Math.random(),2)*200;
     }
     if (socket.is_text) {
       if (socket.is_gen_txt) {
