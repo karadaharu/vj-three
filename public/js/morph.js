@@ -11,7 +11,6 @@
     this.is_ready = false;
     this.geometry = new THREE.BoxGeometry( this.size, this.size, this.size);
     this.sphereGeometry = new THREE.SphereGeometry(this.size/2, 25, 25);
-    console.log(this.sphereGeometry.vertices.length);
     this.material = new THREE.MeshLambertMaterial( { color: 0xff00ff, morphTargets: true } );
     this.verticesSet = [];
     this.verticesSet.push(this.initMorph(this.geometry));
@@ -20,15 +19,18 @@
   };
 
   window.Morph.prototype.initModelMorph = function(scene) {
-    var loader = new THREE.JSONLoader();
-    loader.load( "model/horse.js", ( geometry ) => {
-      geometry.scale(0.2, 0.2, 0.2);
-      this.verticesSet.push(this.initMorph(geometry));
-      this.sphereGeometry.morphTargets.push( { name: "horse", vertices: this.verticesSet[1] } );
-      this.mesh = new THREE.Mesh( this.sphereGeometry, this.material );
-      scene.add( this.mesh );
-      this.is_ready = true;
-    });
+    this.mesh = new THREE.Mesh( this.sphereGeometry, this.material );
+    scene.add( this.mesh );
+    this.is_ready = true;
+    // var loader = new THREE.JSONLoader();
+    // loader.load( "model/horse.js", ( geometry ) => {
+    //   geometry.scale(0.2, 0.2, 0.2);
+    //   this.verticesSet.push(this.initMorph(geometry));
+    //   this.sphereGeometry.morphTargets.push( { name: "horse", vertices: this.verticesSet[1] } );
+    //   this.mesh = new THREE.Mesh( this.sphereGeometry, this.material );
+    //   scene.add( this.mesh );
+    //   this.is_ready = true;
+    // });
   };
   window.Morph.prototype.initMorph = function(geometry) {
     var vertices = [];

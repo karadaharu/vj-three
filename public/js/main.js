@@ -88,6 +88,10 @@ var onChangeCallback = function(values){
       customPass.material.uniforms.mode.value = values[key];
     } else if (key == 'morph_size') {
       morph.mesh.position.z = -values[key];
+    } else if (key == 'is_morph_wire') {
+      morph.mesh.material.wireframe = values[key];
+    } else if (key == 'is_col_diff') {
+      customPass.material.uniforms.colDiff.value = values[key] ? 1.0 : 0.0;
     }
   }
 }
@@ -119,7 +123,9 @@ glitchPass.enabled = false;
 var myEffect = {
   uniforms: {
     "tDiffuse": { value: null },
-    "mode":   { value: 2.0 }
+    "mode":   { value: 2.0 },
+    "time":   { value: 0.3 },
+    "colDiff":   { value: 0.1 }
   },
   vertexShader: [
     "varying vec2 vUv;",
@@ -130,7 +136,10 @@ var myEffect = {
   ].join( "\n" ),
   fragmentShader: [
     "uniform float mode;",
+    "uniform float time;",
+    "uniform float colDiff;",
     "uniform sampler2D tDiffuse;",
+    "const float PI = 3.1415926535897932384626433832795;",
     "varying vec2 vUv;",
     "float round(float x) {",
     " if(fract(x)>0.5){",
@@ -140,16 +149,38 @@ var myEffect = {
     "}",
     "void main() {",
     "vec2 p = vUv;",
+    "vec2 p_diff1 = p;",
+    "vec2 p_diff2 = p;",
+    "float diff1 = (cos(time)+1.0)/2.0;",
+    "if (p_diff1.x < diff1) {",
+    "p_diff1.x = 1.0 + p_diff1.x-diff1;}",
+    "else{p_diff1.x = p_diff1.x - diff1;}",
+    "if (p_diff2.x +diff1 > 1.0) {",
+    "p_diff2.x = -1.0 + p_diff2.x+diff1;}",
+    "else{p_diff2.x = p_diff2.x + diff1;}",
     "if (p.x < 0.5 && (mode == 1.0||mode == 3.0)) p.x = 1.0 - p.x;",
     "if (p.y < 0.5 && (mode == 2.0||mode == 3.0)) p.y = 1.0 - p.y;",
     "if (mode == 4.0) {",
     " p.x = 0.25*abs(p.x/0.25 - round(p.x/0.25))+0.5;",
     " p.y = 0.25*abs(p.y/0.25 - round(p.y/0.25))+0.5;",
+    "} else if (mode == 5.0) {",
+    " if (p.x > 0.25 && p.x < 0.75) {p.x = 0.5;}",
+    "else {p.x = 0.6;}",
+    "} else if (mode == 6.0) {",
+    "vec2 c = vec2(0.5, 0.5);",
+    "float r = distance(p, c);",
+    "r = 0.5*abs(r/0.25 - round(r/0.25))+0.5;",
+    "p.x = r * cos(p.x/4.0);",
+    "p.y = r * sin(p.y/4.0);",
     "}",
     "vec4 color = texture2D( tDiffuse, p );",
+    "vec4 color_diff1 = texture2D( tDiffuse, p_diff1 );",
+    "vec4 color_diff2 = texture2D( tDiffuse, p_diff2 );",
     "vec3 c = color.rgb;",
-    "color.r = c.r;",
-    "color.g = c.g;",
+    "if (colDiff == 1.0 && !(color.r > 0.8 && color.g > 0.8 && color.b > 0.8)) {",
+    "color.r = color_diff1.r;",
+    "color.g = color_diff2.g;",
+    "} else {color.r = c.r;color.g = c.g;}",
     "color.b = c.b;",
     "gl_FragColor = vec4( color.rgb , color.a );",
     "}"
@@ -162,12 +193,13 @@ customPass.renderToScreen = true;
 // console.log(customPass.uniforms.amount = 0);
 composer.addPass(customPass);
 var last_changed = 0;
+var lastWave = new Uint8Array(analyser.frequencyBinCount).fill(0);
+var waveData = new Uint8Array(analyser.frequencyBinCount);
 
 // Update
 function render() {
   stats.begin();
 
-  let waveData = new Uint8Array(analyser.frequencyBinCount);
   analyser.getByteFrequencyData(waveData);
 
   // cube
@@ -180,7 +212,9 @@ function render() {
   }
 
 
-  cur_time = new Date().getTime() / 1000;
+  cur_time = new Date().getTime() / 1000.0;
+  customPass.material.uniforms.time.value =  cur_time % 2 + (lastWave[3]+waveData[3])/(255.0*4);//cur_time%100;
+
   morph.morph(cur_time);
   if (morph.is_ready) {
     morph.mesh.rotation.y += 0.01;
@@ -216,7 +250,7 @@ function render() {
 
   composer.render();
   stats.end();
-
   requestAnimationFrame(render);
+  lastWave = waveData.slice();
 }
 render();
