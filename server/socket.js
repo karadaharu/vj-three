@@ -4,7 +4,6 @@ var path = require('path');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var gen = require('./generate');
-var sample3 = require('./sample3');
 var fs = require('fs');
 
 app.get('/', function(req, res){
