@@ -12,14 +12,58 @@
             gl_Position = vec4( position, 1.0 );
         }
     </script>
+
+
     <script id="fragmentShader" type="x-shader/x-fragment">
+uniform vec2 u_resolution;
+uniform float u_time;
+void main() {
+  vec2 st = gl_FragCoord.xy/u_resolution.xy;
+  float x = step(0.5, st.x);
+  float y = step(0.5, st.y);
+  vec3 color;
+if (x == y) {
+  color = vec3(0.0);
+} else {
+  color = vec3(1.0);
+}
+
+  if (color.x == 0.0) {
+    discard;
+  } else {
+    gl_FragColor=vec4(color,1.0);
+  }
+}
+    </script>
+    <script id="fragmentShader2" type="x-shader/x-fragment">
+uniform vec2 u_resolution;
+uniform float u_time;
+void main() {
+  vec2 st = gl_FragCoord.xy/u_resolution.xy;
+  float x = step(0.5, st.x);
+  float y = step(0.5, st.y);
+  vec3 color;
+if (x == y) {
+  color = vec3(0.0);
+} else {
+  color = vec3(1.0);
+}
+
+  if (color.x == 0.0) {
+    discard;
+  } else {
+    gl_FragColor=vec4(color,1.0);
+  }
+}
+    </script>
+    <script id="fragmentShader1" type="x-shader/x-fragment">
 uniform vec2 u_resolution;
 uniform float u_time;
 
 void main() {
   vec2 st = gl_FragCoord.xy/u_resolution.xy;
   vec3 color = vec3(step(0.5, st.x));
-  if (color.x == 1.0) {
+  if (color.x == 0.0) {
     discard;
   } else {
     gl_FragColor=vec4(color,1.0);

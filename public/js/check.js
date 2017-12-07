@@ -13,7 +13,7 @@
       vertexShader: document.getElementById( 'vCheckShader' ).textContent,
       fragmentShader: document.getElementById( 'fCheckShader' ).textContent
     } );
-
+    scene
     this.mesh = new THREE.Mesh( this.geometry, this.material );
     scene.add( this.mesh );
   };
