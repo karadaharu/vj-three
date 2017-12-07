@@ -19,9 +19,11 @@ app.get('/sample', function(req, res){
 app.get('/sample2', function(req, res){
   res.sendFile(path.resolve('morph.html'));
 });
+
+var port = process.env.PORT || 8080;
 app.use(express.static('public'));
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+http.listen(port, function(){
+  console.log('listening on *:'+toString(port));
 });
 
 var img_path = path.resolve('./public/img/');
