@@ -5,7 +5,7 @@
       this.words = ['大丈夫', '納豆', '夏', 'うなぎ', 'です', '愛'];
       this.n_words = this.words.length;
       this.n_char = this.txt.length;
-      this.color = '#ffffff';
+      this.color = '#000000';
       this.char_size = 512;
       this.ratio = 1.1;
       this.is_on = true;
