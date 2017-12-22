@@ -16,3 +16,4 @@ git push heroku master
 ## Directory
 
 `publice/js/main.js` : root js file for display
+`server/socket.js` : root js file for server

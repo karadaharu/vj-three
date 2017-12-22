@@ -6,12 +6,16 @@ var io = require('socket.io')(http);
 var gen = require('./generate');
 var fs = require('fs');
 
-app.get('/', function(req, res){
-  res.sendFile(path.resolve('draw.html'));
+app.get('/screen', function(req, res){
+  res.sendFile(path.resolve('./html/draw.html'));
 });
 app.get('/controller', function(req, res){
-  res.sendFile(path.resolve('controller.html'));
+  res.sendFile(path.resolve('./html/controller.html'));
 });
+app.get('/message', function(req, res){
+  res.sendFile(path.resolve('./html/message.html'));
+});
+
 app.get('/sample', function(req, res){
   res.sendFile(path.resolve('shader.html'));
 });
