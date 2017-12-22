@@ -17,3 +17,8 @@ git push heroku master
 
 `publice/js/main.js` : root js file for display
 `server/socket.js` : root js file for server
+
+Write log
+```
+$ heroku logs --tail|grep words --line-buffered |tee log.txt
+```
