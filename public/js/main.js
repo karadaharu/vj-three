@@ -132,13 +132,11 @@ var sandboxEffect = {
   ].join( "\n" ),
   fragmentShader: [
     "varying vec2 vUv;",
-// "varying vec2 surfacePosition;",
 "uniform float time;",
 "const float color_intensity = 0.4;",
 "const float Pi = 3.14159;",
 "void main()",
 "{",
-// "  vec2 p=(2.*surfacePosition);",
 "vec2 p=vUv;",
 "for(int i=1;i<9 ;i++)",
 "{",
@@ -224,11 +222,11 @@ var customPass = new THREE.ShaderPass(myEffect);
 var cur_time = 0;
 customPass.renderToScreen = true;
 // console.log(customPass.uniforms.amount = 0);
-// composer.addPass(customPass);
+composer.addPass(customPass);
 
 var customPass2 = new THREE.ShaderPass(sandboxEffect);
-customPass2.renderToScreen = true;
-composer.addPass(customPass2);
+// customPass2.renderToScreen = true;
+// composer.addPass(customPass2);
 
 var last_changed = 0;
 var lastWave = new Uint8Array(analyser.frequencyBinCount).fill(0);
@@ -249,6 +247,7 @@ function render() {
     updateColor(waveData);
   }
 
+  customPass2.renderToScreen = socket.is_gif? true : false;
 
   cur_time = new Date().getTime() / 1000.0;
   customPass.material.uniforms.time.value =  cur_time % 2 + (lastWave[3]+waveData[3])/(255.0*4);//cur_time%100;

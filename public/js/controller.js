@@ -68,8 +68,7 @@
   }
   
   var controller = new Controller();
-  var gui = new dat.GUI({
-  });
+  var gui = new dat.GUI({});
   
   var names = ['is_gif', 'is_text', 'is_cube', 'is_glitch','is_gen_txt', 'is_morph','is_morph_rand','is_morph_wire','is_col_diff','words', 'sound_limit', 'bpm', 'mirror_mode', 'text_size', 'morph_size'];
   var buttons = [];
@@ -95,4 +94,3 @@
   var socket = new window.Socket(controller, gifs);
 
 })();
-
