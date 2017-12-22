@@ -54,13 +54,15 @@
     this.is_gif = false;
     this.is_text = false;
     this.is_cube = false;
+    this.is_win = false;
+    this.is_win_rand = false;
     this.is_glitch = false;
     this.is_gen_txt = false;
     this.is_morph = false;
     this.is_morph_rand = false;
     this.is_morph_wire = false;
     this.is_col_diff = false;
-    this.words = '夏,HONGO SALOON,ようこそ';
+    this.words = 'HONGO SALOON,ようこそ,Merry Christmas';
     this.bpm = 120;
     this.mirror_mode = 0;
     this.text_size = 1;
@@ -70,9 +72,9 @@
   var controller = new Controller();
   var gui = new dat.GUI({});
   
-  var names = ['is_gif', 'is_text', 'is_cube', 'is_glitch','is_gen_txt', 'is_morph','is_morph_rand','is_morph_wire','is_col_diff','words', 'sound_limit', 'bpm', 'mirror_mode', 'text_size', 'morph_size'];
+  var names = ['is_gif', 'is_text', 'is_cube', 'is_win','is_win_rand','is_glitch','is_gen_txt', 'is_morph','is_morph_rand','is_morph_wire','is_col_diff','words', 'sound_limit', 'bpm', 'mirror_mode', 'text_size', 'morph_size'];
   var buttons = [];
-  var len = 10;
+  var len = names.length-5;
   for (var i = 0; i < len; i++) {
     buttons[i] = gui.add(controller, names[i]);
   }

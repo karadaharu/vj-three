@@ -10,6 +10,8 @@
     this.is_gif = false;
     this.is_text = false;
     this.is_cube = false;
+    this.is_win = false;
+    this.is_win_rand = false;
     this.is_glitch = false;
     this.is_gen_txt = false;
     this.mirror_mode = 0;

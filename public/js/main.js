@@ -82,7 +82,13 @@ var onChangeCallback = function(values){
       gif.n_imgs = gif.imgs.length;
     } else if (key == 'is_morph') {
       morph.mesh.visible = values[key];
-    } else if (key == 'bpm') {
+    } else if (key == 'is_win') {
+      win.mesh.visible = values[key];
+      win.mesh2.visible = values[key];
+    } else if (key =='is_win_rand') {
+      win.is_rand = values[key];
+    }
+    else if (key == 'bpm') {
       morph.spb = 60/values[key];
       win.sec_per_beat = 60/values[key];
     } else if (key == 'mirror_mode') {
@@ -221,7 +227,7 @@ var myEffect = {
     "vec4 color_diff1 = texture2D( tDiffuse, p_diff1 );",
     "vec4 color_diff2 = texture2D( tDiffuse, p_diff2 );",
     "vec3 c = color.rgb;",
-    "if (colDiff == 1.0 && !(color.r < 0.1 && color.g < 0.1 && color.b < 0.1)) {",
+    "if (colDiff == 1.0 && !(color.r > 0.9 && color.g > 0.9 && color.b > 0.9)) {",
     "color.r = color_diff1.r;",
     "color.g = color_diff2.g;",
     "} else {color.r = c.r;color.g = c.g;}",
@@ -274,7 +280,9 @@ function render() {
     morph.mesh.rotation.z += 0.01;
   }
   if (waveData[10] > socket.sound_limit && cur_time - last_changed> 0.25) {
-    win.start();
+    if (socket.is_win) {
+      win.start();
+    }
     last_changed = cur_time;
     if (Math.random() > 0.7) {
       gif.changeGif();

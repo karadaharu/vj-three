@@ -1,6 +1,6 @@
 (function(){
   window.Gif = function() {
-    this.imgs = ['hanabi.gif'];
+    this.imgs = [];
     this.n_imgs = this.imgs.length;
     this.cur_img = 0;
     this.gif = document.createElement('img');
