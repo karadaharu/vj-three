@@ -119,6 +119,39 @@ composer.addPass(renderPass);
 var glitchPass = new THREE.GlitchPass();
 composer.addPass(glitchPass);
 glitchPass.enabled = false;
+var sandboxEffect = {
+  uniforms: {
+    "time":{value:0.1}
+  },
+  vertexShader: [
+    "varying vec2 vUv;",
+    "void main() {",
+    "vUv = uv;",
+    "gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+    "}"
+  ].join( "\n" ),
+  fragmentShader: [
+    "varying vec2 vUv;",
+// "varying vec2 surfacePosition;",
+"uniform float time;",
+"const float color_intensity = 0.4;",
+"const float Pi = 3.14159;",
+"void main()",
+"{",
+// "  vec2 p=(2.*surfacePosition);",
+"vec2 p=vUv;",
+"for(int i=1;i<9 ;i++)",
+"{",
+"vec2 newp=p;",
+"float ii = float(i);",
+"newp.x+=0.55/ii*sin(ii*Pi*p.y+time*.01+cos((time/(10.*ii))*ii));",
+"newp.y+=0.55/ii*cos(ii*Pi*p.x+time*.01+sin((time/(10.*ii))*ii));",
+"p=newp;",
+"}",
+"gl_FragColor = vec4(cos(p.x+p.y+2.+time)+.4, sin(p.x+p.y+3.+time)*.5+.2, (sin(p.x+p.y+4.+time)+cos(p.x+p.y+12.+time))*.02+.05, .4);",
+"}",
+].join("\n")
+}
 //custom shader pass
 var myEffect = {
   uniforms: {
@@ -191,7 +224,12 @@ var customPass = new THREE.ShaderPass(myEffect);
 var cur_time = 0;
 customPass.renderToScreen = true;
 // console.log(customPass.uniforms.amount = 0);
-composer.addPass(customPass);
+// composer.addPass(customPass);
+
+var customPass2 = new THREE.ShaderPass(sandboxEffect);
+customPass2.renderToScreen = true;
+composer.addPass(customPass2);
+
 var last_changed = 0;
 var lastWave = new Uint8Array(analyser.frequencyBinCount).fill(0);
 var waveData = new Uint8Array(analyser.frequencyBinCount);
@@ -214,6 +252,7 @@ function render() {
 
   cur_time = new Date().getTime() / 1000.0;
   customPass.material.uniforms.time.value =  cur_time % 2 + (lastWave[3]+waveData[3])/(255.0*4);//cur_time%100;
+  customPass2.material.uniforms.time.value = cur_time%100;
 
   morph.morph(cur_time);
   if (morph.is_ready) {
