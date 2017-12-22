@@ -267,7 +267,6 @@ function render() {
   customPass.material.uniforms.time.value =  cur_time % 2 + (lastWave[3]+waveData[3])/(255.0*4);//cur_time%100;
   customPass2.material.uniforms.time.value = cur_time%100;
 
-  win.update(cur_time);
 
   morph.morph(cur_time);
   if (morph.is_ready) {
@@ -275,6 +274,7 @@ function render() {
     morph.mesh.rotation.z += 0.01;
   }
   if (waveData[10] > socket.sound_limit && cur_time - last_changed> 0.25) {
+    win.start();
     last_changed = cur_time;
     if (Math.random() > 0.7) {
       gif.changeGif();
