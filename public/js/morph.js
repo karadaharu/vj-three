@@ -69,7 +69,7 @@
   };
 
   window.Morph.prototype.morph = function(time) {
-    var per = (cur_time % this.spb)/this.spb;
+    var per = (time % this.spb)/this.spb;
     if ( per < this.last_per ) {
       this.dir = - this.dir;
     }

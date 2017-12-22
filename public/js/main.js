@@ -84,6 +84,7 @@ var onChangeCallback = function(values){
       morph.mesh.visible = values[key];
     } else if (key == 'bpm') {
       morph.spb = 60/values[key];
+      win.sec_per_beat = 60/values[key];
     } else if (key == 'mirror_mode') {
       customPass.material.uniforms.mode.value = values[key];
     } else if (key == 'morph_size') {
@@ -101,7 +102,9 @@ var text = new window.Text(scene);
 var socket = new window.Socket(onChangeCallback);
 var morph = new window.Morph(scene);
 var gif = new window.Gif();
+var win = new window.Window(scene);
 
+morph.mesh.visible = false;
 cube.changeVisible(false);
 text.changeVisible(false);
 
@@ -151,10 +154,17 @@ var sandboxEffect = {
 ].join("\n")
 }
 //custom shader pass
+// mode
+// 1 : 左右対称
+// 2 : 上下対称
+// 3 : 上下左右対称
+// 4 : 万華鏡
+// 5 : 横線
+// 6 : 輪
 var myEffect = {
   uniforms: {
     "tDiffuse": { value: null },
-    "mode":   { value: 2.0 },
+    "mode":   { value: 0.0 },
     "time":   { value: 0.3 },
     "colDiff":   { value: 0.1 }
   },
@@ -212,7 +222,6 @@ var myEffect = {
     "vec4 color_diff2 = texture2D( tDiffuse, p_diff2 );",
     "vec3 c = color.rgb;",
     "if (colDiff == 1.0 && !(color.r < 0.1 && color.g < 0.1 && color.b < 0.1)) {",
-    // "if (colDiff == 1.0 && !(color.r > 0.8 && color.g > 0.8 && color.b > 0.8)) {",
     "color.r = color_diff1.r;",
     "color.g = color_diff2.g;",
     "} else {color.r = c.r;color.g = c.g;}",
@@ -242,6 +251,7 @@ function render() {
 
   analyser.getByteFrequencyData(waveData);
 
+
   // cube
   if (socket.is_cube) {
     cube.updateRotation(waveData);
@@ -257,6 +267,8 @@ function render() {
   customPass.material.uniforms.time.value =  cur_time % 2 + (lastWave[3]+waveData[3])/(255.0*4);//cur_time%100;
   customPass2.material.uniforms.time.value = cur_time%100;
 
+  win.update(cur_time);
+
   morph.morph(cur_time);
   if (morph.is_ready) {
     morph.mesh.rotation.y += 0.01;
@@ -264,7 +276,7 @@ function render() {
   }
   if (waveData[10] > socket.sound_limit && cur_time - last_changed> 0.25) {
     last_changed = cur_time;
-    if (socket.is_gif && Math.random() > 0.7) {
+    if (Math.random() > 0.7) {
       gif.changeGif();
     }
     if (socket.is_morph_rand && Math.random() > 0.7) {
@@ -290,6 +302,7 @@ function render() {
   }
   text.updateSize(cur_time);
 
+  TWEEN.update();
   composer.render();
   stats.end();
   requestAnimationFrame(render);

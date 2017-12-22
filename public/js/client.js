@@ -6,7 +6,7 @@
     this.socketio.on("publish", (data) => { 
       this.addMessage(data.value); 
     });
-    this.sound_limit = 256;
+    this.sound_limit = 30;
     this.is_gif = false;
     this.is_text = false;
     this.is_cube = false;
